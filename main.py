@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from services.calculo import calcular_imposto
 
 app = FastAPI()
 
@@ -17,14 +18,17 @@ def listar_produtos():
 
 @app.post("/produtos")
 def adicionar_produto(produto: dict):
-    imposto = produto["preco"] * 0.1
+    imposto, preco_final = calcular_imposto(produto["preco"])
+
     produto["imposto"] = imposto
-    produto["preco_final"] = produto["preco"] + imposto
+    produto["preco_final"] = preco_final
 
     produtos.append(produto)
+
     return {
         "mensagem": "Produto adicionado com cálculo",
         "produto": produto
+    
     }
 
 @app.get("/analise")
